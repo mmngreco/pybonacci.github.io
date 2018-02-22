@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="author" content="Pybonacci">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+        <title>Desarrollo Dirigido por Pruebas en Python (II). Un Caso Práctico (I) | Pybonacci</title>
+
+	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+	<link rel="icon" href="/favicon.ico" type="image/x-icon">
+        <link rel="alternate" type="application/atom+xml" title="Pybonacci blog atom feed" href="/feeds/all.atom.xml" />
+        <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700' rel='stylesheet' type='text/css'>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <link rel="stylesheet" type="text/css" href="/theme/css/fontello.css"/>
+        <style>.highlight .hll { background-color: #ffffcc }
+.highlight .c { color: #60a0b0; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #FF0000 } /* Error */
+.highlight .k { color: #007020; font-weight: bold } /* Keyword */
+.highlight .o { color: #666666 } /* Operator */
+.highlight .cm { color: #60a0b0; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #007020 } /* Comment.Preproc */
+.highlight .c1 { color: #60a0b0; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #60a0b0; background-color: #fff0f0 } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #FF0000 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #00A000 } /* Generic.Inserted */
+.highlight .go { color: #808080 } /* Generic.Output */
+.highlight .gp { color: #c65d09; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #0040D0 } /* Generic.Traceback */
+.highlight .kc { color: #007020; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #007020; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #007020; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #007020 } /* Keyword.Pseudo */
+.highlight .kr { color: #007020; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #902000 } /* Keyword.Type */
+.highlight .m { color: #40a070 } /* Literal.Number */
+.highlight .s { color: #4070a0 } /* Literal.String */
+.highlight .na { color: #4070a0 } /* Name.Attribute */
+.highlight .nb { color: #007020 } /* Name.Builtin */
+.highlight .nc { color: #0e84b5; font-weight: bold } /* Name.Class */
+.highlight .no { color: #60add5 } /* Name.Constant */
+.highlight .nd { color: #555555; font-weight: bold } /* Name.Decorator */
+.highlight .ni { color: #d55537; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #007020 } /* Name.Exception */
+.highlight .nf { color: #06287e } /* Name.Function */
+.highlight .nl { color: #002070; font-weight: bold } /* Name.Label */
+.highlight .nn { color: #0e84b5; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #062873; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #bb60d5 } /* Name.Variable */
+.highlight .ow { color: #007020; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #bbbbbb } /* Text.Whitespace */
+.highlight .mf { color: #40a070 } /* Literal.Number.Float */
+.highlight .mh { color: #40a070 } /* Literal.Number.Hex */
+.highlight .mi { color: #40a070 } /* Literal.Number.Integer */
+.highlight .mo { color: #40a070 } /* Literal.Number.Oct */
+.highlight .sb { color: #4070a0 } /* Literal.String.Backtick */
+.highlight .sc { color: #4070a0 } /* Literal.String.Char */
+.highlight .sd { color: #4070a0; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #4070a0 } /* Literal.String.Double */
+.highlight .se { color: #4070a0; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #4070a0 } /* Literal.String.Heredoc */
+.highlight .si { color: #70a0d0; font-style: italic } /* Literal.String.Interpol */
+.highlight .sx { color: #c65d09 } /* Literal.String.Other */
+.highlight .sr { color: #235388 } /* Literal.String.Regex */
+.highlight .s1 { color: #4070a0 } /* Literal.String.Single */
+.highlight .ss { color: #517918 } /* Literal.String.Symbol */
+.highlight .bp { color: #007020 } /* Name.Builtin.Pseudo */
+.highlight .vc { color: #bb60d5 } /* Name.Variable.Class */
+.highlight .vg { color: #bb60d5 } /* Name.Variable.Global */
+.highlight .vi { color: #bb60d5 } /* Name.Variable.Instance */
+.highlight .il { color: #40a070 } /* Literal.Number.Integer.Long */</style>
+        <style>.description-author {
+  font-size: 0.8em;
+  color: #333;
+}
+.img-author {
+  max-height: 10em;
+  max-width: 10em;
+}
+body {
+  margin: 0;
+  padding: 0;
+  font: 15px 'Source Sans Pro', sans-serif;
+  line-height: 1.6em;
+  color: #222222;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+a {
+  color: #007ee5;
+  text-decoration: none;
+}
+a:hover {
+  color: #007ee5;
+  text-decoration: none;
+}
+header.main-header {
+  background: none repeat scroll 0% 0% #205F29;
+  margin-bottom: 0px;
+}
+header.main-header a {
+  color: #fff;
+}
+header.main-header .container {
+  max-width: 1000px;
+}
+header.main-header .container nav a:hover {
+  background-color: #5C881C;
+}
+header.navbar-default {
+  border-bottom: none;
+  background-color: #EFEFEF;
+}
+article {
+  margin: 0;
+}
+article header.about {
+  margin-bottom: 0px;
+  padding-bottom: 0px;
+}
+article header {
+  padding-bottom: 20px;
+}
+article header h1 {
+  margin-bottom: 2px;
+  font-weight: 700;
+  color: #000;
+}
+article header time {
+  color: #9E9E9E;
+  float: right;
+}
+article header time.left {
+  color: #9E9E9E;
+  float: left;
+}
+article div.social-links ul {
+  padding: 0px;
+}
+article div.social-links li {
+  display: inline;
+  font-size: 20px;
+}
+article div.social-links li a {
+  color: #000;
+  padding: 10px;
+}
+article div.social-links li a:hover {
+  color: #666;
+  text-decoration: none;
+}
+article p {
+  font-size: 2em;
+  margin-bottom: 20px;
+  line-height: 1.6em;
+  text-align: justify;
+}
+article p.note {
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  padding: 0.533em 0.733em;
+}
+article p.update {
+  background-color: #FEEFB3;
+  border: 1px solid #e6e68a;
+  padding: 0.533em 0.733em;
+}
+article p.alert {
+  background-color: #ffe2e2;
+  border: 1px solid #ffb2b2;
+  padding: 0.533em 0.733em;
+}
+article ul,
+article ol {
+  margin-top: 0px;
+  margin-bottom: 25px;
+}
+article li {
+  font-size: 16px;
+  line-height: 1.6em;
+}
+article a:hover {
+  text-decoration: underline;
+}
+article blockquote {
+  border-left: 2px solid #c7c7cc;
+  color: #666;
+  margin: 30px 0;
+  padding: 0 0 0 25px;
+}
+article img {
+  max-width: 100%;
+}
+article code {
+  color: #333;
+  background-color: #EEE;
+  border-radius: 0;
+  font-size: 1em;
+}
+article .meta {
+  margin-top: 35px;
+}
+article .meta a:hover {
+  text-decoration: none;
+}
+article .meta div {
+  display: block;
+}
+article .meta address:before,
+article .meta time:before,
+article .meta a.tag:before {
+  font-family: 'fontello';
+  margin-right: 6px;
+}
+article .meta address.author {
+  float: left;
+}
+article .meta address:before {
+  content: '\e819';
+}
+article .meta time:before {
+  content: '\f133';
+}
+article .meta div.tags {
+  clear: both;
+}
+article .meta a.tag {
+  margin: 0 10px 10px 0;
+  padding: 1px 12px;
+  display: inline-block;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.05);
+}
+article .meta a.tag:before {
+  content: '\e821';
+}
+article .meta a.tag:hover {
+  background: rgba(0, 0, 0, 0.15);
+}
+article .meta a.read_more,
+article .meta a.comments_btn {
+  font-size: 14px;
+  font-weight: 800;
+  padding: 10px 20px;
+  color: #007aa3;
+  background: #FFF;
+  border: 1px solid #007aa3;
+}
+article .meta a.read_more:hover,
+article .meta a.comments_btn:hover {
+  color: #FFF;
+  background: #007aa3;
+}
+article .meta:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.index {
+  max-width: 700px;
+}
+.index article header h2 {
+  font-size: 36px;
+  margin-bottom: 2px;
+  font-weight: 700;
+}
+.index article header h2 a {
+  color: #333;
+}
+.index article header h2 a:hover {
+  color: #007ee5;
+  text-decoration: none;
+}
+.index .separator {
+  padding: 40px 0 0 0;
+  margin: 0 0 40px 0;
+  height: 10px;
+  border-bottom: solid 1px #CCC;
+}
+.index .pagination {
+  display: block;
+  margin-bottom: 100px;
+}
+.index .pagination .left {
+  text-align: right;
+}
+.index .pagination .right {
+  text-align: left;
+}
+.index .pagination a {
+  display: inline-block;
+  border: 2px solid #5C881C;
+  margin: 0 5px;
+  padding: 8px 20px;
+  font-weight: bold;
+  color: #5C881C;
+}
+.index .pagination a:hover {
+  color: #FFF;
+  background: #5C881C;
+}
+.post {
+  max-width: 80%;
+}
+.post h1 {
+  font-size: 42px;
+}
+.post h2:before {
+  content: "# ";
+  font-weight: bold;
+  color: #DDD;
+}
+.post h3:before {
+  content: "## ";
+  font-weight: bold;
+  color: #DDD;
+}
+.post h4:before {
+  content: "### ";
+  font-weight: bold;
+  color: #DDD;
+}
+.post p {
+  font-size: 2em;
+}
+.list {
+  max-width: 700px;
+}
+.list ul.double-list {
+  margin: 0 auto 60px;
+  padding: 0;
+  list-style-type: none;
+}
+.list ul.double-list li {
+  padding: 5px 0;
+}
+.list ul.double-list li h2 {
+  font-size: 2em;
+  display: inline;
+  font-weight: normal;
+}
+.list ul.double-list li span {
+  font-family: sans-serif;
+  text-transform: uppercase;
+  text-align: right;
+  float: right;
+  padding-top: 3px;
+  font-size: 12px;
+  color: #999;
+}
+.full-width-content {
+  padding-top: 10px;
+  padding-left: 0px;
+  padding-right: 0px;
+  margin-left: -20px;
+  margin-right: -20px;
+}
+.col-xs-1,
+.col-sm-1,
+.col-md-1,
+.col-lg-1,
+.col-xs-2,
+.col-sm-2,
+.col-md-2,
+.col-lg-2,
+.col-xs-3,
+.col-sm-3,
+.col-md-3,
+.col-lg-3,
+.col-xs-4,
+.col-sm-4,
+.col-md-4,
+.col-lg-4,
+.col-xs-5,
+.col-sm-5,
+.col-md-5,
+.col-lg-5,
+.col-xs-6,
+.col-sm-6,
+.col-md-6,
+.col-lg-6,
+.col-xs-7,
+.col-sm-7,
+.col-md-7,
+.col-lg-7,
+.col-xs-8,
+.col-sm-8,
+.col-md-8,
+.col-lg-8,
+.col-xs-9,
+.col-sm-9,
+.col-md-9,
+.col-lg-9,
+.col-xs-10,
+.col-sm-10,
+.col-md-10,
+.col-lg-10,
+.col-xs-11,
+.col-sm-11,
+.col-md-11,
+.col-lg-11,
+.col-xs-12,
+.col-sm-12,
+.col-md-12,
+.col-lg-12 {
+  padding-right: 0px;
+  padding-left: 0px;
+}
+.disclaimer {
+  text-align: center;
+  background-color: #EFEFEF;
+  border-bottom: none;
+  margin-top: 6em;
+}</style>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?..." type="text/javascript"></script>
+        <script type="text/javascript">
+        init_mathjax = function() {
+            if (window.MathJax) {
+                // MathJax loaded
+                MathJax.Hub.Config({
+                    tex2jax: {
+                        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                        displayMath: [ ['$$','$$'], ["\\[","\\]"] ]
+                    },
+                    displayAlign: 'left', // Change this to 'center' to center equations.
+                    "HTML-CSS": {
+                        styles: {'.MathJax_Display': {"margin": 0}}
+                    }
+                });
+                MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+            }
+        }
+        init_mathjax();
+        </script>
+
+    </head>
+
+    <body>
+        <header class="navbar navbar-default bs-docs-nav">
+            <div class="container-fluid">
+                <div class="navbar-header">
+		  <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#theNavbar">
+		    <span class="icon-bar"></span>
+		    <span class="icon-bar"></span>
+		    <span class="icon-bar"></span> 
+		  </button>
+                  <a class="navbar-brand" href="/" title="Home" class="title">Pybonacci</a><!-- — Python y Ciencia-->
+                </div>
+                <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation" id="theNavbar">
+		    <ul class="nav navbar-nav navbar-right">
+                            <li><a href="/pages/acerca-de-pybonacci.html" title="About">Acerca de</a></li>
+                            <li><a href="/archives.html" title="Archive">Archivos</a></li>
+                            <li><a class="nodec icon-rss" href="/feeds/all.atom.xml" title="pybonacci.github.io RSS feed" rel="me"></a></li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+        <div id="wrap">
+<div class="container post">
+    <article>
+        <header>
+            <h1>Desarrollo Dirigido por Pruebas en Python (II). Un Caso Práctico (I)</h1>
+            <div class="meta">
+                <time datetime="article.date.isoformat()" pubdate>mié 19 junio 2013</time>
+                <address class="vcard author">Por
+                    <a class="url fn" href="http://pybonacci.github.io/author/javierjus.html">javierjus</a>
+                </address>
+            </div>
+        </header>
+
+        <div class="article_content">
+            <p>A principios de año escribimos una entrada que puedes leer <a href="http://pybonacci.org/2013/01/07/desarrollo-dirigido-por-pruebas-en-python-i-una-historia-que-pasa-todos-los-dias/" title="Desarrollo dirigido por pruebas en Python (I): Una historia que pasa todos los días">aquí</a>. Después de un parón más largo de lo previsto, volvemos a la carga con el desarrollo dirigido por pruebas en Python.</p>
+<p>Vamos a utilizar TDD y el módulo unittest para crear una aplicación que se conecte a twitter, recupere los mensajes de un hashtag y almacene parte de los mensajes en un fichero. El nombre del fichero será la fecha actual y el hashtag. El fichero contendrá la información de cada tweet separada por comas.</p>
+<p>Dividiremos este ejemplo en varias entradas. En cada entrada, desarrollaremos una parte de la aplicación a medida que aprendemos distintas técnicas y buenas prácticas para aplicar TDD. En la primera entrada empezaremos con la aplicación y veremos algunos aspectos clave de la aplicación de TDD.</p>
+<h2><strong>El diario de diseño</strong></h2>
+<p>Vamos  comenzar creando el diario de diseño. Este diario es la lista de tareas que tenemos pendientes (una to-do list) de hacer cómo código a escribir o funcionalidad a implementar y nos va a servir para mantenernos en todo momento con el foco centrado. Utilizamos el diario cuando ya tengamos una funcionalidad implementada (y gracias a TDD probada) para decir la siguiente y cuando, durante un ciclo de TDD, se nos ocurra nueva funcionalidad o nuevas condiciones a implementar en nuestro código. Vamos a ver las tareas que tenemos que hacer en el cuadro 1.</p>
+<table border="1" cellspacing="0" cellpadding="0">
+  <tr>
+    <td valign="top" width="576">
+      <b>Cuadro 1. Diario de diseño.</b>
+    </td>
+  </tr>
+
+  <tr>
+    <td valign="top" width="576">
+      1) Conectarse a Internet y obtener los mensajes que contengan un tag concreto.<br /> 2) Procesar los tweets para obtener el nombre y dirección twitter del autor, la fecha y el contenido del tweet.<br /> 3) Guardar la información anterior en un nuevo fichero.<br /> 4) Crear una interfaz de usuario por línea de comandos.
+    </td>
+  </tr>
+</table>
+
+<p>Para empezar a escribir código elegimos una de las tareas anteriores, la que queramos. No tenemos que imponernos un orden ni pensar que tenemos dependencias. En su lugar elegimos la tarea que consideremos más importante, más arriesgada, más rápida de implementar, etc.</p>
+<!--more-->
+
+<h2><strong>Procesar mensajes </strong></h2>
+<p>Elegimos la tarea 2 y empezamos preguntándonos: ¿cómo queremos que sea el código para procesar los tweets? ¿Cuál es el código más sencillo que podemos escribir. Un ciclo de TDD siempre comienza escribiendo una prueba que falla, por lo que escribimos las respuestas de estas preguntas en una prueba que defina qué es el procesado de mensajes, cómo queremos hacerlo y qué resultado queremos obtener. Esta prueba nos permite centrar el foco de lo que implementaremos a continuación.</p>
+<pre><code class="language-python">class TestFactoriaTweets(unittest.TestCase):
+    def testProcesaTweets_ConUnTweetsObtengoListaConUnElemento(self):
+        tweetDePrueba = [{}]
+        factoria = FactoriaTweets()
+        listaDeTweets = factoria.procesaTweets(tweetDePrueba)
+        self.assertEquals(1, len(listaDeTweets))</code></pre>
+
+<p>Con esta prueba hemos establecido que, el mecanismo para procesar los tweets es el método procesaTweets de la clase FactoriaTweets y que recibe como parámetro una lista de tweets traídos de Twitter y reduce. Después de ejecutar la prueba y comprobar que falla, vamos a implementar la FactoriaTweet y el método procesaTweets más sencillos posible.</p>
+<pre><code class="language-python">class TweetInfo:
+    pass
+class FactoriaTweets:
+    def procesaTweets(self, mensajes):
+        resultado = list()
+        for m in mensajes:
+            resultado.append(TweetInfo())
+        return resultado</code></pre>
+
+<p>TweetInfo es la clase dónde almacenaremos la información relevante de cada tweet. Ahora es una clase vacía porque aún hay ninguna prueba que obligue a implementarla. Antes de continuar vamos a actualizar el diario de diseño. A partir de esa prueba descubrimos más tareas que anotamos en el diario de diseño.</p>
+<table border="1" cellspacing="0" cellpadding="0">
+  <tr>
+    <td valign="top" width="576">
+      <b>Cuadro 2. Diario de diseño.</b>
+    </td>
+  </tr>
+
+  <tr>
+    <td valign="top" width="576">
+      1) Conectarse a Internet y obtener los mensajes que contengan un tag concreto.<br /> 2) Procesar los tweets para obtener el nombre y dirección Twitter del autor, la fecha y el contenido del tweet.</p> 
+
+      <ul>
+        <ul>
+          2.1) Definir el contenido de tweetDePrueba
+        </ul>
+      </ul>
+
+      <ul>
+        2.2) Lo elementos de la lista resultante deben tener el nombre y dirección Twitter del autor, la fecha y el contenido del tweet.
+      </ul>
+
+      <p>
+        3) Guardar la información anterior en un nuevo fichero<br /> 4) Crear una interfaz de usuario por línea de comandos.</td> </tr> </tbody> </table>
+
+<div class="highlight"><pre><span></span>    <span class="nt">&lt;p&gt;</span>
+      Vamos a continuar con estas dos nuevas tareas. Necesitamos la información de entrada (tweetDePrueba) para poder ejecutar la prueba. Twitter nos responde una cadena de texto en formato JSon, por tanto, después de procesar dicha cadena, lo que tendremos es una lista de dicts. Cada dict representará un tweet y las claves de dicho dict serán los campos de un tweet como la persona que lo escribió, el contenido, la fecha, etc. Vamos a plasmar lo anterior en una nueva prueba.
+    <span class="nt">&lt;/p&gt;</span>
+
+    <span class="nt">&lt;pre&gt;&lt;code</span> <span class="na">class=</span><span class="s">&quot;language-python&quot;</span><span class="nt">&gt;</span>def testProcesaTweets_ConUnTweetsObtengoUnTwwetInfo(self):
+    rawTweet = u&quot;&quot;&quot;[{&quot;created_at&quot;:&quot;FechaCreacion&quot;,
+                    &quot;from_user&quot;:&quot;DireccionTwitter&quot;,
+                    &quot;from_user_name&quot;:&quot;NombreUsuario&quot;,
+                    &quot;text&quot;:&quot;Texto&quot;}]&quot;&quot;&quot;
+    tweetDePrueba = json.loads(rawTweet)
+    factoria = FactoriaTweets()
+    listaDeTweets = factoria.procesaTweets(tweetDePrueba)
+    # asserts<span class="nt">&lt;/code&gt;&lt;/pre&gt;</span>
+
+    <span class="nt">&lt;p&gt;</span>
+      En este caso, para simular un mensaje podría haber puesto un <span class="nt">&lt;i&gt;</span>dict<span class="nt">&lt;/i&gt;</span> con los pares clave-valor que devuelve JSon, pero me ha sido más cómodo modificar la cadena devuelta por Twitter y llamar al procesador de JSon de Python.
+    <span class="nt">&lt;/p&gt;</span>
+
+    <span class="nt">&lt;p&gt;</span>
+      Esta prueba no está completa porque no tenemos nada que comprobar con la información de entrada, por lo que vamos a implementar el paso 2.3. Para ello vamos a definir, con una prueba, la clase que contendrá la información que queremos de cada tweet.
+    <span class="nt">&lt;/p&gt;</span>
+
+    <span class="nt">&lt;pre&gt;&lt;code</span> <span class="na">class=</span><span class="s">&quot;language-python&quot;</span><span class="nt">&gt;</span>class TestTweetInfo(unittest.TestCase):
+def testCreateTweetInfoAndStoreInformation(self):
+    ti = TweetInfo(&quot;DireccionTwitter&quot;, &quot;NombreUsuario&quot;, &quot;Texto&quot;, &quot;FechaCreacion&quot;)
+    self.assertEquals(ti.direccionOrigen, &quot;DireccionTwitter&quot;)
+    self.assertEquals(ti.usuarioOrigen, &quot;NombreUsuario&quot;)
+    self.assertEquals(ti.contenido, &quot;Texto&quot;)
+    self.assertEquals(ti.fechaCreacion, &quot;FechaCreacion&quot;)<span class="nt">&lt;/code&gt;&lt;/pre&gt;</span>
+
+    <span class="nt">&lt;p&gt;</span>
+      Puede parecer un desperdicio de tiempo escribir una prueba para verificar una clase tan sencilla como TweetInfo, y es cierto. Sin embargo no hay que olvidar que en TDD escribimos pruebas para implementar código, por tanto la prueba anterior tiene la misión de empujarnos implementar la clase TweetInfo y también a valorar cómo pasarle la información que almacena y cómo recuperarla.<span class="nt">&lt;br</span> <span class="nt">/&gt;</span> Vamos a incorporar nuestra reciente clase TweetInfo a la prueba del código 3. El resultado se muestra a continuación.
+    <span class="nt">&lt;/p&gt;</span>
+
+    <span class="nt">&lt;pre&gt;&lt;code</span> <span class="na">class=</span><span class="s">&quot;language-python&quot;</span><span class="nt">&gt;</span>def testProcesaTweets_ConUnTweetsObtengoListaConUnElemento(self):
+    rawTweet = u&quot;&quot;&quot;[{&quot;created_at&quot;:&quot;FechaCreacion&quot;,
+                    &quot;from_user&quot;:&quot;DireccionTwitter&quot;,
+                    &quot;from_user_name&quot;:&quot;NombreUsuario&quot;,
+                    &quot;text&quot;:&quot;Texto&quot;}]&quot;&quot;&quot;
+    tweetDePrueba = json.loads(rawTweet)
+    factoria = FactoriaTweets()
+    listaDeTweets = factoria.procesaTweets(tweetDePrueba)
+    self.assertEquals(1, len(listaDeTweets))
+def testProcesaTweets_ConUnTweetsObtengoUnTweetInfo(self):
+    rawTweet = u&quot;&quot;&quot;[{&quot;created_at&quot;:&quot;FechaCreacion&quot;,
+                    &quot;from_user&quot;:&quot;DireccionTwitter&quot;,
+                    &quot;from_user_name&quot;:&quot;NombreUsuario&quot;,
+                    &quot;text&quot;:&quot;Texto&quot;}]&quot;&quot;&quot;
+    tweetDePrueba = json.loads(rawTweet)
+    factoria = FactoriaTweets()
+    listaDeTweets = factoria.procesaTweets(tweetDePrueba)
+    tweetInfo = listaDeTweets[0]
+    self.assertEquals(tweetInfo.direccionOrigen,
+                      tweetDePrueba[0][&quot;from_user&quot;])
+    self.assertEquals(tweetInfo.usuarioOrigen,
+                      tweetDePrueba[0][&quot;from_user_name&quot;])
+    self.assertEquals(tweetInfo.contenido, tweetDePrueba[0][&quot;text&quot;])
+    self.assertEquals(tweetInfo.fechaCreacion, tweetDePrueba[0][&quot;created_at&quot;])<span class="nt">&lt;/code&gt;&lt;/pre&gt;</span>
+
+    <span class="nt">&lt;p&gt;</span>
+      Las pruebas fallan porque el código de producción no está utilizando TweetInfo. Vamos a añadirlo tal y como se muestra a continuación.
+    <span class="nt">&lt;/p&gt;</span>
+
+    <span class="nt">&lt;pre&gt;&lt;code</span> <span class="na">class=</span><span class="s">&quot;language-python&quot;</span><span class="nt">&gt;</span>class FactoriaTweets:
+def procesaTweets(self, mensajes):
+    resultado = list()
+    for m in mensajes:
+        resultado.append(TweetInfo(m[u&#39;from_user&#39;], m[&quot;from_user_name&quot;],
+                                   m[&quot;text&quot;], m[&quot;created_at&quot;]))
+    return resultado<span class="nt">&lt;/code&gt;&lt;/pre&gt;</span>
+
+    <span class="nt">&lt;p&gt;</span>
+      Verificamos las pruebas y ambas pasan. Ya podemos tachar ambas tareas en nuestro diario de diseño.
+    <span class="nt">&lt;/p&gt;</span>
+
+    <span class="nt">&lt;table</span> <span class="na">border=</span><span class="s">&quot;1&quot;</span> <span class="na">cellspacing=</span><span class="s">&quot;0&quot;</span> <span class="na">cellpadding=</span><span class="s">&quot;0&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;tr&gt;</span>
+        <span class="nt">&lt;td</span> <span class="na">valign=</span><span class="s">&quot;top&quot;</span> <span class="na">width=</span><span class="s">&quot;576&quot;</span><span class="nt">&gt;</span>
+          <span class="nt">&lt;b&gt;</span>Cuadro 3. Diario de diseño.<span class="nt">&lt;/b&gt;</span>
+        <span class="nt">&lt;/td&gt;</span>
+      <span class="nt">&lt;/tr&gt;</span>
+
+      <span class="nt">&lt;tr&gt;</span>
+        <span class="nt">&lt;td</span> <span class="na">valign=</span><span class="s">&quot;top&quot;</span> <span class="na">width=</span><span class="s">&quot;576&quot;</span><span class="nt">&gt;</span>
+          1) Conectarse a Internet y obtener los mensajes que contengan un tag concreto.<span class="nt">&lt;span</span> <span class="na">style=</span><span class="s">&quot;text-decoration:line-through;&quot;</span><span class="nt">&gt;&lt;br</span> <span class="nt">/&gt;</span> 2) Procesar los tweets para obtener el nombre y dirección twitter del autor, la fecha y el contenido del tweet.<span class="nt">&lt;/span&gt;&lt;span</span> <span class="na">style=</span><span class="s">&quot;text-decoration:line-through;&quot;</span><span class="nt">&gt;</span>2.1) Definir el contenido de tweetDePrueba<span class="nt">&lt;/span&gt;&lt;br</span> <span class="nt">/&gt;</span> <span class="nt">&lt;span</span> <span class="na">style=</span><span class="s">&quot;text-decoration:line-through;&quot;</span><span class="nt">&gt;</span>2.2) Los elementos de la lista resultante deben tener el nombre y dirección twitter del autor, la fecha y el contenido del tweet. <span class="nt">&lt;/span&gt;</span>3) Guardar la información anterior en un nuevo fichero.<span class="nt">&lt;br</span> <span class="nt">/&gt;</span> 4) Crear una interfaz de usuario por línea de comandos.
+        <span class="nt">&lt;/td&gt;</span>
+      <span class="nt">&lt;/tr&gt;</span>
+    <span class="nt">&lt;/table&gt;</span>
+
+    <span class="nt">&lt;h2&gt;</span>
+      <span class="nt">&lt;b&gt;</span>La primera refactorización<span class="nt">&lt;br</span> <span class="nt">/&gt;</span> <span class="nt">&lt;/b&gt;</span>
+    <span class="nt">&lt;/h2&gt;</span>
+
+    <span class="nt">&lt;p&gt;</span>
+      Un ciclo de TDD no está terminado sin una refactorización tanto del código de producción como del código de pruebas.
+    <span class="nt">&lt;/p&gt;</span>
+
+    <span class="nt">&lt;p&gt;</span>
+      Cuando aplicamos TDD solemos hacer ciclos muy cortos de prueba a código y vuelta a la prueba. Con esto buscamos  la seguridad de que todos lo que implementamos funciona antes de escribir nuevo código, por también hace que estemos muy centrados en el fragmento de código que estemos trabajando y que perdamos de vista la visión global.
+    <span class="nt">&lt;/p&gt;</span>
+
+    <span class="nt">&lt;p&gt;</span>
+      En la refactorización vemos el código de manera global y en modificar el código para que sea más sencillo de entender y cambiar. TDD nos hace a escribir código de manera incremental por lo que si nuestra base no está bien diseñada ni es fácil de entender, el trabajo de añadir nuevo código se hará cada vez más lento y difícil.
+    <span class="nt">&lt;/p&gt;</span>
+
+    <span class="nt">&lt;p&gt;</span>
+      Vamos a comenzar refactorizando el código de pruebas y, en concreto, por la clase TestFactoriaTweets que contiene las pruebas de FactoriaTweets. Aunque lo hemos visto antes, vamos a mostrar todo el código de la prueba.
+    <span class="nt">&lt;/p&gt;</span>
+
+    <span class="nt">&lt;pre&gt;&lt;code</span> <span class="na">class=</span><span class="s">&quot;language-python&quot;</span><span class="nt">&gt;</span>class TestFactoriaTweets(unittest.TestCase):
+def testProcesaTweets_ConUnTweetsObtengoListaConUnElemento(self):
+    rawTweet = u&quot;&quot;&quot;[{&quot;created_at&quot;:&quot;FechaCreacion&quot;,
+                    &quot;from_user&quot;:&quot;DireccionTwitter&quot;,
+                    &quot;from_user_name&quot;:&quot;NombreUsuario&quot;,
+                    &quot;text&quot;:&quot;Texto&quot;}]&quot;&quot;&quot;
+    tweetDePrueba = json.loads(rawTweet)
+    factoria = FactoriaTweets()
+    listaDeTweets = factoria.procesaTweets(tweetDePrueba)
+    self.assertEquals(1, len(listaDeTweets))
+def testProcesaTweets_ConUnTweetsObtengoUnTweetInfo(self):
+    rawTweet = u&quot;&quot;&quot;[{&quot;created_at&quot;:&quot;FechaCreacion&quot;,
+                    &quot;from_user&quot;:&quot;DireccionTwitter&quot;,
+                    &quot;from_user_name&quot;:&quot;NombreUsuario&quot;,
+                    &quot;text&quot;:&quot;Texto&quot;}]&quot;&quot;&quot;
+    tweetDePrueba = json.loads(rawTweet)
+    factoria = FactoriaTweets()
+    listaDeTweets = factoria.procesaTweets(tweetDePrueba)
+    tweetInfo = listaDeTweets[0]
+    self.assertEquals(tweetInfo.direccionOrigen,
+                      tweetDePrueba[0][&quot;from_user&quot;])
+    self.assertEquals(tweetInfo.usuarioOrigen,
+                      tweetDePrueba[0][&quot;from_user_name&quot;])
+    self.assertEquals(tweetInfo.contenido, tweetDePrueba[0][&quot;text&quot;])
+    self.assertEquals(tweetInfo.fechaCreacion, tweetDePrueba[0][&quot;created_at&quot;])<span class="nt">&lt;/code&gt;&lt;/pre&gt;</span>
+
+    <span class="nt">&lt;p&gt;</span>
+      Podemos ver varias líneas repetidas entre las dos pruebas, así que nuestra primera refactorización va a ir a evitarlas. En las herramientas XUnit, como unittest, se puede definir un método setUp que se ejecuta automáticamente andes de cada prueba, por lo que es el sitio ideal para crear el tweet de prueba.
+    <span class="nt">&lt;/p&gt;</span>
+
+    <span class="nt">&lt;p&gt;</span>
+      En la segunda prueba vemos que necesitamos varios asserts para comprobar que el mensaje coincide con el tweet de entrada. Vamos a aplicar otra refactorización y extraer estos asserts a un método auxiliar para que el objetivo de la prueba quede más claro. El resultado final se muestra a continuación.
+    <span class="nt">&lt;/p&gt;</span>
+
+    <span class="nt">&lt;pre&gt;&lt;code</span> <span class="na">class=</span><span class="s">&quot;language-python&quot;</span><span class="nt">&gt;</span>class TestFactoriaTweets(unittest.TestCase):
+def setUp(self):
+    rawTweet = u&quot;&quot;&quot;[{&quot;created_at&quot;:&quot;FechaCreacion&quot;,
+                    &quot;from_user&quot;:&quot;DireccionTwitter&quot;,
+                    &quot;from_user_name&quot;:&quot;NombreUsuario&quot;,
+                    &quot;text&quot;:&quot;Texto&quot;}]&quot;&quot;&quot;
+    self.tweetDePrueba = json.loads(rawTweet)
+    self.factoria = FactoriaTweets()
+def testProcesaTweets_ConUnTweetsObtengoListaConUnElemento(self):
+    listaDeTweets = self.factoria.procesaTweets(self.tweetDePrueba)
+    self.assertEquals(1, len(listaDeTweets))
+def testProcesaTweets_ConUnTweetsObtengoUnTweetInfo(self):
+    listaDeTweets = self.factoria.procesaTweets(self.tweetDePrueba)
+    self.assertEqualsToTweetDePrueba(listaDeTweets[0])
+def assertEqualsToTweetDePrueba(self, tweetInfo):
+    self.assertEquals(tweetInfo.direccionOrigen,
+                      self.tweetDePrueba[0][&quot;from_user&quot;])
+    self.assertEquals(tweetInfo.usuarioOrigen,
+                      self.tweetDePrueba[0][&quot;from_user_name&quot;])
+    self.assertEquals(tweetInfo.contenido, self.tweetDePrueba[0][&quot;text&quot;])
+    self.assertEquals(tweetInfo.fechaCreacion,
+                      self.tweetDePrueba[0][&quot;created_at&quot;])<span class="nt">&lt;/code&gt;&lt;/pre&gt;</span>
+
+    <span class="nt">&lt;p&gt;</span>
+      Pasamos ahora refactorizamos el código de producción, siempre asegurándonos de que después de cada cambio las pruebas siguen funcionando correctamente.<span class="nt">&lt;br</span> <span class="nt">/&gt;</span> Aunque por la brevedad del código podríamos pensar que no es necesaria una refactorización, sí que existe un mal olor en el código. Si nos fijamos, el método procesaTweets tiene dos responsabilidades distintas que son procesar toda la lista de tweets y crear un objeto TweetInfo por cada tweet. Vamos a separar ambas funcionalidades en dos métodos aparte. El código resultante se muestra a continuación.
+    <span class="nt">&lt;/p&gt;</span>
+
+    <span class="nt">&lt;pre&gt;&lt;code</span> <span class="na">class=</span><span class="s">&quot;language-python&quot;</span><span class="nt">&gt;</span>class FactoriaTweets:
+def procesaTweets(self, mensajes):
+    resultado = list()
+    for m in mensajes:
+        resultado.append(self._creaTweetInfo(m))
+    return resultado
+def _creaTweetInfo(self, tweetDict):
+    return TweetInfo(tweetDict[u&#39;from_user&#39;], tweetDict[&quot;from_user_name&quot;],
+                     tweetDict[&quot;text&quot;], tweetDict[&quot;created_at&quot;])<span class="nt">&lt;/code&gt;&lt;/pre&gt;</span>
+
+    <span class="nt">&lt;p&gt;</span>
+      En este caso, hemos creado un nuevo método pero no hemos escrito una prueba antes. Veamos el por qué. En este método no escribimos nuevo código, solo cambiamos un código que ya funciona de sitio. El nuevo método está siendo probado por las pruebas que tenemos. Además, al ser privado pedimos que nos e acceda directamente a él.
+    <span class="nt">&lt;/p&gt;</span>
+
+    <span class="nt">&lt;h2&gt;</span>
+      <span class="nt">&lt;strong&gt;</span>Pruebas cómo documentación<span class="nt">&lt;/strong&gt;</span>
+    <span class="nt">&lt;/h2&gt;</span>
+
+    <span class="nt">&lt;p&gt;</span>
+      También podemos utilizar las pruebas para documentar el funcionamiento del código aunque no realicemos un ciclo TDD. Por ejemplo, ¿qué sucede si nuestra entrada no contiene ningún tweet nuestra salida será una lista vacía?. Definamos este escenario con una prueba.
+    <span class="nt">&lt;/p&gt;</span>
+
+    <span class="nt">&lt;pre&gt;&lt;code</span> <span class="na">class=</span><span class="s">&quot;language-python&quot;</span><span class="nt">&gt;</span>def testProcesaTweets_SinTweetsObtengoListaConUnElemento(self):
+    listaDeTweets = self.factoria.procesaTweets([])
+    self.assertEquals(0, len(listaDeTweets))<span class="nt">&lt;/code&gt;&lt;/pre&gt;</span>
+
+    <span class="nt">&lt;p&gt;</span>
+      Al ejecutar la prueba comprobamos que el resultado es el esperado por lo que no es necesario implementar nada. Antes de añadir pruebas adicionales hemos de tener en cuenta el ost de su mantenimiento. Demasiadas pruebas puede ser contraproducentes pro dedicar un esfuerzo innecesario. Además, un código con demasiadas pruebas puede ofrecer resistencia al cambio por la gran cantidad de pruebas afectadas
+    <span class="nt">&lt;/p&gt;</span>
+
+    <span class="nt">&lt;h2&gt;</span>
+      <span class="nt">&lt;b&gt;</span>Conclusiones<span class="nt">&lt;/b&gt;</span>
+    <span class="nt">&lt;/h2&gt;</span>
+
+    <span class="nt">&lt;p&gt;</span>
+      Hemos visto algunos aspectos muy interesantes sobre cómo aplicar TDD como no preocuparnos de algo hasta que no lo necesitamos. Vamos a darles un último repaso ya que seguiremos aplicándolos en las próximas entregas.
+    <span class="nt">&lt;/p&gt;</span>
+
+    <span class="nt">&lt;p&gt;</span>
+      Hemos intentado escribir sólo el código que necesitamos. Por ejemplo, en la primera prueba no hemos indicado ni la información del tweet ni la información de salida, porque no era necesario aún. Esto nos ha permitido empezar a codificar más rápido y centrarnos solo en cómo procesar los tweets recibidos. También hemos refactorizado para evitar duplicación de código y para mejorar la legibilidad escondiendo detalles detrás de métodos. Por último, hemos hecho ciclos rápidos con poco código y pruebas pequeñas para tener la tranquilidad de que todo lo anterior funciona antes de empezar a programar algo nuevo.
+    <span class="nt">&lt;/p&gt;</span>
+
+    <span class="nt">&lt;p&gt;</span>
+      Y aquí terminamos esta primera entrega. En la próxima, en una o dos semanas, implementaremos una nueva tarea del diario de diseño aplicando TDD. Continuaremos aplicando todo lo que hemos aprendido en esta entrega y, además presentaremos los dobles de prueba (también llamados test doubles).
+    <span class="nt">&lt;/p&gt;</span>
+
+    <span class="nt">&lt;p&gt;</span>
+      Hasta pronto.
+    <span class="nt">&lt;/p&gt;</span>
+
+    <span class="nt">&lt;div</span> <span class="na">style=</span><span class="s">&quot;background-color:#eee;padding:.5em 1em .15em;margin-bottom:1em;&quot;</span><span class="nt">&gt;</span>
+      Este artículo es fruto de la colaboración entre Javier Gutiérrez y Juan Luis Cano, que aportó sugerencias y correcciones al original.<span class="nt">&lt;/p&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+</pre></div>
+        </div>
+
+        <div class="meta">
+            <div class="tags">
+                    <a href="http://pybonacci.github.io/tag/python.html" class="tag">python</a>
+                    <a href="http://pybonacci.github.io/tag/tdd.html" class="tag">TDD</a>
+                    <a href="http://pybonacci.github.io/tag/test.html" class="tag">test</a>
+                    <a href="http://pybonacci.github.io/tag/testing.html" class="tag">testing</a>
+            </div>
+        </div>
+
+
+    </article>
+<script data-isso="//https://comments.pybonacci.org"
+        data-isso-lang="es"
+        src="//https://comments.pybonacci.org/js/embed.min.js"></script>
+<section id="isso-thread">
+<h3>Comentarios</h3>
+</section>
+
+</div>
+
+<style type="text/css">
+{
+    max-width: 700px;
+}
+
+.text_cell .prompt {
+    display: none;
+}
+
+div.cell {
+    padding: 0;
+}
+
+div.text_cell_render {
+    padding: 0;
+}
+
+div.prompt {
+    font-size: 13px;
+}
+
+div.input_prompt {
+    padding: .7em 0.2em;
+}
+
+div.output_prompt {
+    padding: .4em .2em;
+}
+
+div.input_area {
+    margin: .2em 0.4em;
+    max-width: 580px;
+}
+
+table.dataframe {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    line-height: 20px;
+}
+
+table.dataframe th, td {
+    padding: 4px;
+    text-align: left;
+}
+
+pre code {
+    background-color: inherit;
+}</style>
+
+        </div>
+
+        <footer class="disclaimer">
+          <div class="container-fluid">
+            <p>
+              © 2012-2017 Pybonacci, licencia <a href="https://github.com/Pybonacci/pybonacci.github.io/blob/sources/LICENSE.md"> CC BY-SA 4.0 + MIT</a>
+              salvo otra indicación.
+              <p>Contenido generado con <a href= "http://docs.getpelican.com/">Pelican</a>.</p>
+            </p>
+          </div>
+        </footer>
+
+    </body>
+</html>
